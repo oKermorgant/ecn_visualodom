@@ -76,7 +76,7 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
         int mask_count = 0;
         for(unsigned i = 0; i < mask.cols; i++)
         {
-            if(mask.at<uchar>(i))
+            if(mask.at<int>(i))
             {
                 // write this index in the next valid element
                 std::iter_swap(matched1.begin()+i, matched1.begin()+mask_count);
@@ -108,6 +108,7 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
         {
             for(unsigned int i=0;i<H.size();++i)
             {
+
                 // compute Z from X.nx + Y.ny + Z.nz = d
                 // equivalent to x.nx + y.ny + nz = d/Z
                 // hence sign(Z) = x.nx + y.ny + nz (positive d)
