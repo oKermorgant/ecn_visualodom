@@ -115,7 +115,7 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
 
                 //if( TO DO )
                 {
-                    cout << "discarded solution " << i <<", negative depth" << endl;
+                    cout << "discarded solution, negative depth" << endl;
                     H.erase(H.begin()+i);
                     break;
                 }
@@ -135,7 +135,7 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
             // compare normals H[0].n and H[1].n to current normal estimation n_guess
             // change idx to 1 if needed
         }
-        cout << "Kept solution " << idx << endl;
+        cout << "Best solution found" << endl;
 
 
         // rescale translation from scale guess
