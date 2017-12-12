@@ -16,18 +16,21 @@ int main(int argc, char ** argv)
     // camera parameters
     vpCameraParameters cam(684.169232, 680.105767, 365.163397, 292.358876);
 
+    // initial pose: translation known, rotation to be estimated later
+    vpHomogeneousMatrix cMo0(-0.1,-0.1,0.7,0,0,0);
+
     // visual odometer
     bool relative_to_initial = true;
     VisualOdom vo(cam, relative_to_initial);
 
+    // give 3D hints
     // we look for a more or less horizontal plane
     // vo.setNormalGuess(TO DO);
+    // we know the initial translation
+    vo.setInitialTranslation(cMo0.getTranslationVector());
 
     // AR
     ModelDisplay ar(cam, im);
-
-    // initial pose: translation known, rotation to be estimated later
-    vpHomogeneousMatrix cMo0(-0.1,-0.1,0.7,0,0,0);
 
     // cMo = current pose, M = relative pose between two images (from previous to next)
     vpHomogeneousMatrix cMo, M;
@@ -49,8 +52,6 @@ int main(int argc, char ** argv)
         {
             if(compute_initial_pose)
             {
-                // get normal to plane
-                vo.getNormal(nor);
                 // initialize absolute pose from normal
                 vo.getRotationFromNormal(R);
                 // update initial pose
@@ -58,13 +59,6 @@ int main(int argc, char ** argv)
 
                 // write current estimation
                 cMo = cMo0;
-
-                // compute and update distance estimate from normal
-                // d = TO DO;
-                vo.setDistance(d);
-
-                // rescale this translation from d
-                // TO DO
 
                 compute_initial_pose = false;
             }

@@ -27,7 +27,6 @@ VisualOdom::VisualOdom(const vpCameraParameters cam, bool _relative_to_initial) 
     // default guesses
     n_guess.resize(3);
     n_guess[2] = 1;
-    d_guess = 1;
 }
 
 
@@ -134,12 +133,16 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
         {
             // compare normals H[0].n and H[1].n to current normal estimation n_guess
             // change idx to 1 if needed
+            // TO DO
         }
         cout << "Best solution found" << endl;
 
 
         // rescale translation from scale guess
-        // TO DO
+        if(d_guess == 0)    // first guess from t0 and normal
+        {
+            // TO DO
+        }
 
 
         // build corresponding relative transformation        

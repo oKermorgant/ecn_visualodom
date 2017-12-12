@@ -148,16 +148,16 @@ The scale factor is given by the size of the 3D model to be displayed. In practi
 This translation can be used to have a first estimation of the plane parameter $d$ after the first homography has been computed.
 Indeed, in this case we have the normal to the plane and we can just set $d = \n^T{}^c\t_o$. This value can then be used to rescale the relative transform 
 that was extracted from the homography. 
+In the code, this corresponds to the line \texttt{if(d\_guess == 0)}, where we do not yet have an estimate on $d$.
 
 \subsection{Overall algorithm}
 
 By combining the relative transform from homography and the initial guess from known translation, after the second image we can have the whole information:
 \begin{enumerate}
  \item Get unscaled transform from initial homography, this gives us $(\t,\R)$ between the cameras and the normal $\n$ to the plane in the first camera frame.
+ \item This transform can be scaled from the known initial translation ${}^c\t_o$
  \item Get the rotation matrix corresponding to the Z-axis of the plane aligning with the $\n$ axis of the camera frame (\texttt{VisualOdom::getRotationFromNormal}). 
  \item Build the full transform $\cMo(0)$ for the first image (variable \texttt{cMo0})
-  \item Compute the scale factor $d$ from $\n$ and the known translation ${}^c\t_o$ and initialize its value in the visual odometer (\texttt{VisualOdom::setDistance})
-  \item Rescale the relative transform $\t \rightarrow d.\t$
 \end{enumerate}
 
 After this initialization, the scale factor will be updated at each iteration from the previous value and the current camera pose just has to be updated from the previous one and the relative
@@ -204,11 +204,10 @@ The existing methods are:
 \begin{itemize}
  \item \texttt{bool process(cv::Mat \&, vpHomogeneousMatrix \&M)} \\ 
  Main method, processes a new image and returns the corresponding transform. Returns True if everything went fine. 
- \item \texttt{void setDistance(double )}: sets the estimated plane parameter $d$
  \item \texttt{void getRotationFromNormal(vpRotationMatrix \&)}: give the rotation matrix between the plane frame and the camera frame. Can only be used
  if at least one homography was computed.
-  \item \texttt{void getNormal(vpColVector \&}: get the plane parameter $\n$ computed from the last homography. Useful to compute the initial value $d$ at shown in \Sec{sec:init}.
 \end{itemize}
+The current estimate of the homography plane is defined from \texttt{n\_guess} and \texttt{d\_guess}.
 
 Most of the variables are already defined, the attributes of the class can be read in \texttt{visual\_odom.h}. In particular, 
 these useful variables are already available as class attributes:

@@ -63,10 +63,9 @@ public:
         n_guess /= n_guess.euclideanNorm();
     }
 
-    // first guess for d
-    inline void setDistance(double d)
+    inline void setInitialTranslation(vpTranslationVector t)
     {
-        d_guess = d;
+        t0 = t;
     }
 
 
@@ -82,9 +81,6 @@ public:
         const double a = atan2(s, z.t()*n_guess)/s;
         _R.buildFrom(a*ax[0], a*ax[1], a*ax[2]);
     }
-
-    // get current normal estimation
-    void getNormal(vpColVector &_n) {_n = n_guess;}
 
 protected:
     // calibration (OpenCV and ViSP formats)
@@ -104,8 +100,8 @@ protected:
     std::vector<cv::DMatch> matches;
 
     // homographies
-    double d_guess;
-    vpColVector n_guess;
+    double d_guess = 0;
+    vpColVector n_guess, t0;
     std::vector<Homography> H;
     std::vector<cv::Mat> R, t, nor;
 
