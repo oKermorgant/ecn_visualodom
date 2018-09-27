@@ -83,6 +83,7 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
                 mask_count++;
             }
         }
+        std::cout << "Matches: " << matches.size() << ", kept " << mask_count << std::endl;
         // resize vectors to mask size
         matched1.resize(mask_count);
         matched2.resize(mask_count);

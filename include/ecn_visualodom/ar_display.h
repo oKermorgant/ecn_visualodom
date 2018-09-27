@@ -25,43 +25,7 @@ public:
             return;
         }
 
-        // find current ROS distro
-        std::string ros_path = "/opt/ros/indigo/";
-        if(!vpIoTools::checkDirectory(ros_path))
-            ros_path = "/opt/ros/kinetic/";
-
-        // find current ViSP installation
-        std::vector<int> v = {0,1,2,3,4,5,6,7,8,9};
-        std::string ogre_path = "";
-        for(const auto &i: v)
-        {
-            for(const auto &j: v)
-            {
-                for(const auto &k: v)
-                {
-                    std::stringstream ss;
-                    ss << ros_path << "share/visp-" << i << "." << j << "." << k << "/data/ogre-simulator/resources.cfg";
-                    if(vpIoTools::checkFilename(ss.str()))
-                    {
-                        ogre_path = ss.str();
-                        ogre_path.resize(ogre_path.size()-13);
-                        break;
-                    }
-                }
-                if(ogre_path.size())
-                    break;
-            }
-            if(ogre_path.size())
-                break;
-        }
-        
-        ros_path += "lib/x86_64-linux-gnu/visp/data/ogre-simulator/";
-        
-        std::cout << "Loading vpAROgre from:" << std::endl;
-        std::cout << " - ROS: " << ros_path  << std::endl;
-        std::cout << " - Meshes: " << ogre_path << std::endl;
-
-        ogre_ =    vpAROgre(_cam, _I.getWidth(), _I.getHeight(), ogre_path.c_str(), ros_path.c_str());
+        ogre_ =    vpAROgre(_cam, _I.getWidth(), _I.getHeight(), OGRE_RESSOURCE_PATH, OGRE_RESSOURCE_PATH);
         ogre_.init(_I);
         ogre_.load("Robot", "robot.mesh");
         ogre_.setScale("Robot", 0.002f,0.002f,0.002f);
