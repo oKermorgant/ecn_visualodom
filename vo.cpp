@@ -7,7 +7,6 @@ using namespace std;
 
 int main(int argc, char ** argv)
 {
-
     // video source and image
     VideoLoop cap("../armen.mp4");
     cv::Mat im;

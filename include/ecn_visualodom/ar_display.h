@@ -36,7 +36,7 @@ public:
     ogre_.addResource(std::string(OGRE_RESSOURCE_PATH) + "/media/models");
     ogre_.addResource(std::string(OGRE_RESSOURCE_PATH) + "/media/materials/scripts");
     ogre_.addResource(std::string(OGRE_RESSOURCE_PATH) + "/media/materials/textures");
-
+    ogre_.setShowConfigDialog(false);
     ogre_.init(_I);
     ogre_.load("Robot", "robot.mesh");
     ogre_.setScale("Robot", 0.002f,0.002f,0.002f);
