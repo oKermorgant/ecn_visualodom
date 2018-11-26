@@ -19,6 +19,12 @@ public:
     init_ = true;
     cam_ = _cam;
 
+    if(_I.getRows() * _I.getCols() == 0)
+    {
+      std::cout << "*** \n Cannot initialize display, have you downloaded the video?\n***" << std::endl << std::endl;
+      return;
+    }
+
     if(!use_ar_)
     {
       display_.init(_I, -1, -1, "Pose display");
@@ -73,6 +79,8 @@ public:
   {
     if(!init_) return;
 
+    try
+    {
     if(use_ar_)
     {
       ogre_.display(_I, _cMw);
@@ -84,7 +92,11 @@ public:
       vpDisplay::flush(_I);
       vpDisplay::display(_I);
     }
-
+    }
+    catch (...)
+    {
+      std::cout << "Cannot diplay images, have you downloaded the video?" << std::endl;
+    }
   }
 
 

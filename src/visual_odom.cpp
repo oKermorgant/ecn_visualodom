@@ -63,6 +63,7 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
       matched1.push_back(kp1[m.queryIdx].pt);
       matched2.push_back(kp2[m.trainIdx].pt);
     }
+    mask = cv::Mat(matches.size(), 1, cv::DataType<int>::type, cv::Scalar(0));
 
     // use RANSAC to compute homography and store it in Hp
     // Hp = TO DO
