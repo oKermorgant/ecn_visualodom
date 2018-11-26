@@ -166,6 +166,19 @@ transform found by the homography.
 
 In practice, we may experience a scale drift and perform all homographies with regards to the initial image.
 
+\subsection{Using 3D augmented reality}
+
+During the initial tests only a 3D frame is displayed. If you want to display a 3D robot model, add a third argument in 
+the definition of the AR display in \texttt{vo.cpp}:
+\begin{center}
+\texttt{ModelDisplay ar(cam, im, true);}  
+\end{center}
+A window will open when run, you should modify two things:
+\begin{enumerate}
+  \item Uncheck the Full Screen option
+  \item Set image to 640$\times$480
+\end{enumerate}
+
 
 \appendix
 \section{Main classes and tools}\label{sec:classes}
