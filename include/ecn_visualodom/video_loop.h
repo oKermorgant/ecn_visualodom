@@ -15,7 +15,7 @@ public:
     if(!video_file.good())
     {
       std::cout << "Downloading video..." << std::endl;
-      system("wget http://pagesperso.ls2n.fr/~kermorgant-o/files/armen.mp4 -P .. > /dev/null");
+      system("wget http://pagesperso.ls2n.fr/~kermorgant-o/files/armen.mp4 -P .. >/dev/null 2>&1");
     }
 
     // open this video

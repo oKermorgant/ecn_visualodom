@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(ecn_visualodom)
 
-add_compile_options(-std=c++11)
+set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_BUILD_TYPE DEBUG)
 find_package(VISP REQUIRED)
