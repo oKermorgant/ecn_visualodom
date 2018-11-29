@@ -6,31 +6,6 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-
-VisualOdom::VisualOdom(const vpCameraParameters cam, bool _relative_to_initial) :matcher(cv::NORM_HAMMING)
-{
-  // init calibration matrices from camera parameters
-  Kcv = (cv::Mat1d(3, 3) <<
-         cam.get_px(), 0, cam.get_u0(),
-         0, cam.get_py(), cam.get_v0(),
-         0, 0, 1);
-  K = cam.get_K();
-  Ki = cam.get_K_inverse();
-
-  // no image yet
-  first_time = true;
-  relative_to_initial = _relative_to_initial;
-
-  // matching
-  akaze = cv::AKAZE::create();
-
-  // default guesses
-  n_guess.resize(3);
-  n_guess[2] = 1;
-}
-
-
-
 // process a new image and extracts relative transform
 bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
 {
@@ -64,35 +39,21 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
       matched2.push_back(kp2[m.trainIdx].pt);
     }
     // assume no outliers
-    mask = cv::Mat(matches.size(), 1, cv::DataType<int>::type, cv::Scalar(1));
+    mask = cv::Mat(matches.size(), 1, cv::DataType<bool>::type, cv::Scalar(1));
 
     // use RANSAC to compute homography and store it in Hp
     // Hp = TO DO
 
-    // show correct matches
+
+    // display two images & matches
     cv::drawMatches(im1, kp1, im2, kp2, matches, imatches, cv::Scalar::all(-1), cv::Scalar::all(-1), mask);
     cv::imshow("Matches", imatches);
 
     // keep only inliers
-    int mask_count = 0;
-    for(unsigned i = 0; i < matched1.size(); i++)
-    {
-      if(mask.at<int>(i))
-      {
-        // write this index in the next valid element
-        std::iter_swap(matched1.begin()+i, matched1.begin()+mask_count);
-        std::iter_swap(matched2.begin()+i, matched2.begin()+mask_count);
-        mask_count++;
-      }
-    }
-    std::cout << "Matches: " << matches.size() << ", kept " << mask_count << std::endl;
+    const auto inliner_count = removeOutliers(matched1, matched2);
 
-    if(mask_count)
+    if(inliner_count)
     {
-      // resize vectors to mask size
-      matched1.resize(mask_count);
-      matched2.resize(mask_count);
-
       // decompose homography -> n solutions in (R,t,nor)
       int n = 0;
       // TO DO
@@ -109,7 +70,7 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
       // build normalized coordinates of points in camera 1
       vpMatrix X1 = cvPointToNormalized(matched1); // dim(X1) = (3, nb_pts)
 
-      for(unsigned int j=0;j<matched1.size();++j)
+      for(unsigned int j=0;j<inliner_count;++j)
       {
         for(unsigned int i=0;i<H.size();++i)
         {
@@ -175,7 +136,7 @@ bool VisualOdom::process(cv::Mat &im2, vpHomogeneousMatrix &_M)
         vpColVector X2;
         vpRowVector d(X1.getCols());
         double Z1;
-        for(unsigned int i=0;i<X1.getCols();++i)
+        for(unsigned int i=0;i<inliner_count;++i)
         {
           // Z1 from current distance guess
           // TO DO
