@@ -4,8 +4,10 @@ project(ecn_visualodom)
 set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_BUILD_TYPE DEBUG)
-find_package(VISP REQUIRED)
-find_package(OpenCV 3 REQUIRED)
+find_package(VISP REQUIRED COMPONENTS ar core gui imgproc)
+
+find_package(OpenCV)
+find_package(Boost COMPONENTS thread date_time REQUIRED)
 
 ###########
 
@@ -24,4 +26,4 @@ add_executable(visualodom vo.cpp
                 include/ecn_visualodom/video_loop.h
                 include/ecn_visualodom/visual_odom.h src/visual_odom.cpp
                 )
-target_link_libraries(visualodom ${VISP_LIBRARIES}  ${OpenCV_LIBS})
+target_link_libraries(visualodom ${VISP_LIBRARIES}  ${OpenCV_LIBS} Boost::date_time Boost::thread)

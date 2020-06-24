@@ -80,7 +80,7 @@ public:
     n_guess[0] = x;
     n_guess[1] = y;
     n_guess[2] = z;
-    n_guess /= n_guess.euclideanNorm();
+    n_guess /= n_guess.frobeniusNorm();
   }
 
   inline void setInitialTranslation(vpTranslationVector t)
@@ -97,7 +97,7 @@ public:
   {
     vpColVector z(3);z[2]=1;
     vpColVector ax = vpColVector::crossProd(z, n_guess);
-    const double s = ax.euclideanNorm();
+    const double s = ax.frobeniusNorm();
     const double a = atan2(s, z.t()*n_guess)/s;
     _R.buildFrom(a*ax[0], a*ax[1], a*ax[2]);
   }
