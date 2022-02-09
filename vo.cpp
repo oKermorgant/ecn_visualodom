@@ -29,6 +29,7 @@ int main(int argc, char ** argv)
   vo.setInitialTranslation(cMo0.getTranslationVector());
 
   // AR
+  // add a third argument to display a robot mesh instead of a basic frame
   ModelDisplay ar(cam, im);
 
   // cMo = current pose, M = relative pose between two images (from previous to next)

@@ -18,8 +18,6 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS}
 )
 
-add_definitions(-DOGRE_RESSOURCE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ogre-simulator")
-
 ## Visual Odometry
 add_executable(visualodom vo.cpp
                 include/ecn_visualodom/ar_display.h

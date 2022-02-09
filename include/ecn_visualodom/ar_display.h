@@ -31,11 +31,7 @@ public:
       return;
     }
 
-    ogre_ =    vpAROgre(_cam, _I.getWidth(), _I.getHeight(), OGRE_RESSOURCE_PATH, OGRE_RESSOURCE_PATH);
-    ogre_.addResource(std::string(OGRE_RESSOURCE_PATH) + "/media");
-    ogre_.addResource(std::string(OGRE_RESSOURCE_PATH) + "/media/models");
-    ogre_.addResource(std::string(OGRE_RESSOURCE_PATH) + "/media/materials/scripts");
-    ogre_.addResource(std::string(OGRE_RESSOURCE_PATH) + "/media/materials/textures");
+    ogre_ = vpAROgre(_cam, _I.getWidth(), _I.getHeight());
     ogre_.setShowConfigDialog(false);
     ogre_.init(_I);
     ogre_.load("Robot", "robot.mesh");

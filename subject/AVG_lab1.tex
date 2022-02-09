@@ -53,13 +53,13 @@ The video should be downloaded from my website in the lab directory:
 
 It may be useful to use an IDE like Qt Creator, to do so you have to launch it from the command line then:
 \begin{itemize}
- \item Open project and load the \texttt{CMakeLists.txt} file
- \item Set the \texttt{build} folder as the build folder
+ \item Open project and load the \okttt{CMakeLists.txt} file
+ \item Set the \okttt{build} folder as the build folder
 \end{itemize}
-On the computers of P-ro room, Qt Creator setup can be done by running \texttt{gen\_qtcreator\_config} in the project source directory.
+On the computers of P-ro room, Qt Creator setup can be done by running \okttt{gen_qtcreator_config} in the project source directory.
  
 
-\subsection{Structure of the \texttt{ecn\_visualodom} folder}
+\subsection{Structure of the \okttt{ecn_visualodom} folder}
 
 The folder has the classical structure of a C++ project:
 \begin{figure}[h]\centering
@@ -83,14 +83,14 @@ The folder has the classical structure of a C++ project:
 \caption{Files used by the package}
 \end{figure}
 
-The only files to be modified are \texttt{visual\_odom.cpp} that is the visual odometry class and performs visual odometry between two consecutive frames, and \texttt{vo.cpp} that is the main 
+The only files to be modified are \okttt{visual_odom.cpp} that is the visual odometry class and performs visual odometry between two consecutive frames, and \okttt{vo.cpp} that is the main 
 C++ file and uses visual odometry to estimate the current pose of the camera with regards to the world frame.
 
 
 \subsection{Expected work}
 
-The goal is to implement an homography-based visual odometry and test it on the \texttt{armen.mp4} video.
-The main steps are already written in the code as comment sections. The \texttt{VisualOdom} class will be doing most of the job, except for the initial pose estimation. 
+The goal is to implement an homography-based visual odometry and test it on the \okttt{armen.mp4} video.
+The main steps are already written in the code as comment sections. The \okttt{VisualOdom} class will be doing most of the job, except for the initial pose estimation. 
 Dedicated OpenCV of ViSP classes or functions will also do most of the job and the goal of the lab is also to get used to them.
 
 The next section details the homography-based visual odometry algorithm and its most important steps.
@@ -114,7 +114,7 @@ odometry before giving clues about the initial pose estimation.
 
 \subsection{Relative odometry from homography}
 
-The core algorithm is to compute the relative odometry, that is the transform between the two camera frames. It corresponds to the method \texttt{VisualOdom::process}.
+The core algorithm is to compute the relative odometry, that is the transform between the two camera frames. It corresponds to the method \okttt{VisualOdom::process}.
 The algorithm to follow is:
 \begin{enumerate}
   \item Convert image to gray level
@@ -124,15 +124,15 @@ The algorithm to follow is:
  \item Decompose homography to get $(\t,\R,\n)$ candidates\\
   A method in OpenCV
 will give us all candidates (usually 4) under the form of 3 vectors of dimension 4: translations, rotations and normal to the plane. Candidates 
-are stored under a \texttt{vector} of \texttt{Homography}, a custom structure used to regroup $(\t,\R,\n)$ (see \Sec{sec:homog}).
+are stored under a \okttt{vector} of \okttt{Homography}, a custom structure used to regroup $(\t,\R,\n)$ (see \Sec{sec:homog}).
  \item Prune candidates that give a negative Z for at least 1 point \\ The corresponding loop is already in the code but the condition to consider a candidate to be valid or not has to be defined.
  \item There still may be two candidates, keep the one that has the normal $\n$ closer to the estimated normal
 \end{enumerate}
-The last step shows that a guess for the normal has to be given in order to find the best candidate homography. This can be done with the \texttt{VisualOdom::setNormalGuess} in the main code (around line 24). In our case we assume
+The last step shows that a guess for the normal has to be given in order to find the best candidate homography. This can be done with the \okttt{VisualOdom::setNormalGuess} in the main code (around line 24). In our case we assume
 we observe a horizontal plane with a camera also placed horizontally. This is sufficient to have a corse estimate of the normal to the plane in the camera frame.
 
 At the end of the whole sequence, we have a homography decomposition $(\t,\R,\n)$ without the scale factor. Actually OpenCV gives us $\t/d$ as $\t$ as they cannot be separated without
-extra information. If we have an estimation of the value $d$, we can easily compute the true translation with $d.\t$. This $d$ estimation is stored in the \texttt{VisualOdom} class as \texttt{d\_guess}.
+extra information. If we have an estimation of the value $d$, we can easily compute the true translation with $d.\t$. This $d$ estimation is stored in the \okttt{VisualOdom} class as \okttt{d_guess}.
 
 The final step is to prepare for the next image: the parameters $(d,\n)$ of the plane equation have to be rewritten in the frame of camera 2.
 \begin{enumerate}
@@ -149,7 +149,7 @@ The scale factor is given by the size of the 3D model to be displayed. In practi
 This translation can be used to have a first estimation of the plane parameter $d$ after the first homography has been computed.
 Indeed, in this case we have the normal to the plane and we can just set $d = \n^T{}^c\t_o$. This value can then be used to rescale the relative transform 
 that was extracted from the homography. 
-In the code, this corresponds to the line \texttt{if(d\_guess == 0)}, where we do not yet have an estimate on $d$.
+In the code, this corresponds to the line \okttt{if(d_guess == 0)}, where we do not yet have an estimate on $d$.
 
 \subsection{Overall algorithm}
 
@@ -157,8 +157,8 @@ By combining the relative transform from homography and the initial guess from k
 \begin{enumerate}
  \item Get unscaled transform from initial homography, this gives us $(\t,\R)$ between the cameras and the normal $\n$ to the plane in the first camera frame.
  \item This transform can be scaled from the known initial translation ${}^c\t_o$
- \item Get the rotation matrix corresponding to the Z-axis of the plane aligning with the $\n$ axis of the camera frame (\texttt{VisualOdom::getRotationFromNormal}). 
- \item Build the full transform $\cMo(0)$ for the first image (variable \texttt{cMo0})
+ \item Get the rotation matrix corresponding to the Z-axis of the plane aligning with the $\n$ axis of the camera frame (\okttt{VisualOdom::getRotationFromNormal}). 
+ \item Build the full transform $\cMo(0)$ for the first image (variable \okttt{cMo0})
 \end{enumerate}
 
 After this initialization, the scale factor will be updated at each iteration from the previous value and the current camera pose just has to be updated from the previous one and the relative
@@ -169,9 +169,9 @@ In practice, we may experience a scale drift and perform all homographies with r
 \subsection{Using 3D augmented reality}
 
 During the initial tests only a 3D frame is displayed. If you want to display a 3D robot model, add a third argument in 
-the definition of the AR display in \texttt{vo.cpp}:
+the definition of the AR display in \okttt{vo.cpp}:
 \begin{center}
-\texttt{ModelDisplay ar(cam, im, true);}  
+\okttt{ModelDisplay ar(cam, im, true);}  
 \end{center}
 
 
@@ -184,9 +184,9 @@ This library includes many tools for linear algebra, especially for 3D transform
 The documentation is found here: \url{http://visp-doc.inria.fr/doxygen/visp-daily/classes.html}.\\
 The main classes from ViSP (at least in this lab) are:
 \begin{itemize}
-\item \texttt{vpMatrix} represents a classical matrix, can then be transposed, inversed (or pseudo-inversed), multiplied with a vector, etc.
-\item \texttt{vpColVector} is a column vector with classical mathematical properties.
-\item \texttt{vpHomogeneousMatrix} is a $4\times 4$ 3d transform matrix. They can be multiplied to compose transforms.
+\item \okttt{vpMatrix} represents a classical matrix, can then be transposed, inversed (or pseudo-inversed), multiplied with a vector, etc.
+\item \okttt{vpColVector} is a column vector with classical mathematical properties.
+\item \okttt{vpHomogeneousMatrix} is a $4\times 4$ 3d transform matrix. They can be multiplied to compose transforms.
 \end{itemize}
 These class can be declared and used as follows:
 \begin{center}\cppstyle
@@ -199,35 +199,35 @@ These class can be declared and used as follows:
 \end{lstlisting}
 \end{center}
 
-\subsection{The \texttt{Homography} structure}
+\subsection{The \okttt{Homography} structure}
 \label{sec:homog}
 
-This structure is a simple object that regroups values for $(\t,\R,\n)$. From an instance \texttt{H}, they can be accessed with \texttt{H.t}, 
-\texttt{H.R} and \texttt{H.n}. \texttt{t} and \texttt{n} are \texttt{vpColVector} while \texttt{R} is a \texttt{vpRotationMatrix}.
+This structure is a simple object that regroups values for $(\t,\R,\n)$. From an instance \okttt{H}, they can be accessed with \okttt{H.t}, 
+\okttt{H.R} and \okttt{H.n}. \okttt{t} and \okttt{n} are \okttt{vpColVector} while \okttt{R} is a \okttt{vpRotationMatrix}.
 
-\subsection{The \texttt{VisualOdom} class}
+\subsection{The \okttt{VisualOdom} class}
 
 This class does most of the job (at least when you add the correct missing code). It is initialized from the camera parameters and a flag telling if the homography
 should be computed relative to the initial image or relative to the previous image (inducing scale drift).\\
 The existing methods are:
 \begin{itemize}
- \item \texttt{bool process(cv::Mat \&, vpHomogeneousMatrix \&M)} \\ 
+ \item \okttt{bool process(cv::Mat \&, vpHomogeneousMatrix \&M)} \\ 
  Main method, processes a new image and returns the corresponding transform. Returns True if everything went fine. 
- \item \texttt{void getRotationFromNormal(vpRotationMatrix \&)}: give the rotation matrix between the plane frame and the camera frame. Can only be used
+ \item \okttt{void getRotationFromNormal(vpRotationMatrix \&)}: give the rotation matrix between the plane frame and the camera frame. Can only be used
  if at least one homography was computed.
 \end{itemize}
-The current estimate of the homography plane is defined from \texttt{n\_guess} and \texttt{d\_guess}.
+The current estimate of the homography plane is defined from \okttt{n_guess} and \okttt{d_guess}.
 
-Most of the variables are already defined, the attributes of the class can be read in \texttt{visual\_odom.h}. In particular, 
+Most of the variables are already defined, the attributes of the class can be read in \okttt{visual_odom.h}. In particular, 
 these useful variables are already available as class attributes:
 \begin{itemize}
-\item Stored image \texttt{im1}, image that can be used for gray-level conversion \texttt{img}
- \item Keypoints (\texttt{kp1, kp2}) and their descriptors (\texttt{des1, des2})
- \item Keypoint detector and descriptor: \texttt{akaze}
- \item Matcher and matches (\texttt{matcher, matches})
- \item Calibration matrices: \texttt{Kcv} for OpenCV functions, \texttt{K} and \texttt{Ki} (inverse) for ViSP matrix multiplication
- \item Homography matrix (\texttt{Hp}, OpenCV format) and RANSAC mask for inliers (\texttt{mask})
- \item Vector of homography structures \texttt{H} used to analyze the candidates and prune them if needed.
+\item Stored image \okttt{im1}, image that can be used for gray-level conversion \okttt{img}
+ \item Keypoints (\okttt{kp1, kp2}) and their descriptors (\okttt{des1, des2})
+ \item Keypoint detector and descriptor: \okttt{akaze}
+ \item Matcher and matches (\okttt{matcher, matches})
+ \item Calibration matrices: \okttt{Kcv} for OpenCV functions, \okttt{K} and \okttt{Ki} (inverse) for ViSP matrix multiplication
+ \item Homography matrix (\okttt{Hp}, OpenCV format) and RANSAC mask for inliers (\okttt{mask})
+ \item Vector of homography structures \okttt{H} used to analyze the candidates and prune them if needed.
 \end{itemize}
 
 
